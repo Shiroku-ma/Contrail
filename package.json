@@ -1,0 +1,26 @@
+{
+  "name": "Contrail",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --dir",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^21.0.1",
+    "electron-builder": "^22.10.4"
+  },
+  "build": {
+    "mac": {
+      "target": {
+        "target": "dir",
+        "arch": "universal"
+      }
+    }
+  }
+}
