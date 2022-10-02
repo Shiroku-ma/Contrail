@@ -68,7 +68,6 @@ footer {
     position: absolute;
     bottom: 0;
     box-sizing: border-box;
-    padding: 1px;
 }
 
 footer img {
@@ -78,21 +77,19 @@ footer img {
     fill: white;
 }
 
-::-webkit-scrollbar-track {
-    background: #12af80;
-}
-
-.commands {
+#commands {
     display: flex;
     justify-content: center;
 }
 
-.commands svg {
+.commnad-item {
     width: 14px;
     height: 14px;
-    margin: 2px 7px 0px 7px;
+    margin: 0px 4px 0px 4px;
+    padding: 3px;
+    border-radius: 4px;
 }
 
-.commands svg:hover {
+.commnad-item:hover {
     cursor: pointer;
 }

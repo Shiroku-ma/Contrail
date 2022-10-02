@@ -1,5 +1,6 @@
 var codeMode = false;
 var justBefore;
+var intelli = [ "{", "[", "(", "'", '"']
 
 function CountLine( str ) {
     num = str.match(/\r\n|\n/g);
@@ -37,8 +38,8 @@ function onTextAreaKeyDown(event, object) {
         object.selectionEnd = cursorPosition + 1;
     }
 	if (codeMode) {
-    // かぎかっこの場合の自動補完
-		if (keyVal === "{") {
+    //自動補完
+		if (keyVal === "{") { //括弧
 			event.preventDefault();
 			object.value = leftString + "{}" + rightString;
 			object.selectionEnd = cursorPosition + 1;
@@ -49,19 +50,27 @@ function onTextAreaKeyDown(event, object) {
 			object.value = leftString + "[]" + rightString;
 			object.selectionEnd = cursorPosition + 1;
 			justBefore = "["
-		} else if (keyVal === '"') {
+		} else if (keyVal === '"') { //ダブルクォート
 			event.preventDefault();
 			object.value = leftString + '""' + rightString;
 			object.selectionEnd = cursorPosition + 1;
 			justBefore = '"'
-		} else if (keyVal === "'") {
+		} else if (keyVal === "'") { //シングルクォート
 			event.preventDefault(); 
 			object.value = leftString + "''" + rightString;
 			object.selectionEnd = cursorPosition + 1;
 			justBefore = "'"
-		} else if (
-			keyCode === 8 && (justBefore === "{" || justBefore === "[" || justBefore === "'" || justBefore === '"')) {
+		} else if (keyVal === "(") { // 括弧
+			event.preventDefault(); 
+			object.value = leftString + "()" + rightString;
+			object.selectionEnd = cursorPosition + 1;
+			justBefore = "("
+		} else if (keyCode === 8 && intelli.includes(justBefore)) {
 			object.value = leftString + rightString.slice(1);
+			object.selectionEnd = cursorPosition;
+			justBefore = "bs"
+		} else if (keyCode === 13 && intelli.includes(justBefore)) {
+			object.value = leftString + "\n" + rightString;
 			object.selectionEnd = cursorPosition;
 			justBefore = "bs"
 		} else {
@@ -73,10 +82,25 @@ function onTextAreaKeyDown(event, object) {
 
 (function() {
 	var editor = document.getElementById("editor"); //エディタ
-	var linenum = document.getElementById('line-number') //行番号
+	var linenum = document.getElementById('line-number'); //行番号
+	
+	document.getElementById('cmd-line-num').style.backgroundColor = "#4cd9ae"
 
 	editor.onkeydown = function(event) {onTextAreaKeyDown(event, this);}
+
+	var child = document.getElementsByClassName('commnad-item');
+	for (i = 0; i < child.length; i++) {
+		child[i].addEventListener('click', function( event ) {
+			if (event.target.style.backgroundColor == "rgb(76, 217, 174)") {
+				event.target.style.backgroundColor = "";
+			} else {
+				event.target.style.backgroundColor = "#4cd9ae";
+			}
+		})
+	}
 	
+
+	//行番号
 	document.getElementById('cmd-line-num').addEventListener('click', function() {
 		if (linenum.style.display == "none") {
 			linenum.style.display = "flex";
@@ -85,6 +109,7 @@ function onTextAreaKeyDown(event, object) {
 		}
 	});
 
+	//コードモード
 	document.getElementById('cmd-code-mode').addEventListener('click', function() {
 		codeMode = !codeMode
 	});
