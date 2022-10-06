@@ -1,6 +1,22 @@
-var codeMode = false;
 var justBefore;
 var intelli = [ "{", "[", "(", "'", '"']
+
+class Contrail {
+	constructor() {
+		this.cm = false;
+	}
+
+	get codeMode() {
+		return this.cm;
+	}
+
+	switch_codeMode() {
+		this.cm = !this.cm;
+	}
+
+}
+
+const contrail = new Contrail();
 
 function CountLine( str ) {
     num = str.match(/\r\n|\n/g);
@@ -37,7 +53,7 @@ function onTextAreaKeyDown(event, object) {
         // カーソル位置をタブスペースの後ろにする
         object.selectionEnd = cursorPosition + 1;
     }
-	if (codeMode) {
+	if (contrail.codeMode) {
     //自動補完
 		if (keyVal === "{") { //括弧
 			event.preventDefault();
@@ -83,23 +99,23 @@ function onTextAreaKeyDown(event, object) {
 (function() {
 	var editor = document.getElementById("editor"); //エディタ
 	var linenum = document.getElementById('line-number'); //行番号
-	
-	document.getElementById('cmd-line-num').style.backgroundColor = "#4cd9ae"
 
 	editor.onkeydown = function(event) {onTextAreaKeyDown(event, this);}
 
-	var child = document.getElementsByClassName('commnad-item');
+
+	document.getElementById('cmd-line-num').style.backgroundColor = "#4cd9ae";
+	const child = document.getElementById('commands').children;
+
 	for (i = 0; i < child.length; i++) {
-		child[i].addEventListener('click', function( event ) {
-			if (event.target.style.backgroundColor == "rgb(76, 217, 174)") {
-				event.target.style.backgroundColor = "";
+		child[i].addEventListener('click', function() {
+			if (window.getComputedStyle(this).backgroundColor === "rgb(76, 217, 174)") {
+				this.style.backgroundColor = "";
 			} else {
-				event.target.style.backgroundColor = "#4cd9ae";
+				this.style.backgroundColor = "#4cd9ae";
 			}
 		})
 	}
 	
-
 	//行番号
 	document.getElementById('cmd-line-num').addEventListener('click', function() {
 		if (linenum.style.display == "none") {
@@ -107,10 +123,11 @@ function onTextAreaKeyDown(event, object) {
 		} else {
 			linenum.style.display = "none";
 		}
+		linenum.scrollTop = editor.scrollTop;
 	});
 
 	//コードモード
 	document.getElementById('cmd-code-mode').addEventListener('click', function() {
-		codeMode = !codeMode
+		contrail.switch_codeMode();
 	});
 })();
