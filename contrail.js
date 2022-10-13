@@ -1,5 +1,5 @@
 var justBefore;
-var intelli = [ "{", "[", "(", "'", '"']
+var intelli = [ "{", "[", "(", "'", '"', "<"]
 
 class Contrail {
 	constructor() {
@@ -100,6 +100,11 @@ function onTextAreaKeyDown(event, object) {
 			object.value = leftString + "()" + rightString;
 			object.selectionEnd = cursorPosition + 1;
 			justBefore = "("
+		} else if (keyVal === "<") {
+			event.preventDefault();
+			object.value = leftString + "<>" + rightString;
+			object.selectionEnd = cursorPosition + 1;
+			justBefore = "<";
 		} else if (keyCode === 8 && intelli.includes(justBefore)) {
 			object.value = leftString + rightString.slice(1);
 			object.selectionEnd = cursorPosition;
@@ -153,15 +158,15 @@ function highLight( str ) {
 	editor.onkeydown = function(event) {onTextAreaKeyDown(event, this);}
 
 
-	document.getElementById('cmd-line-num').style.backgroundColor = "#4cd9ae";
+	document.getElementById('cmd-line-num').style.backgroundColor = "rgb(90, 124, 187)";
 	const child = document.getElementById('commands').children;
 
 	for (i = 0; i < child.length; i++) {
 		child[i].addEventListener('click', function() {
-			if (window.getComputedStyle(this).backgroundColor === "rgb(76, 217, 174)") {
+			if (window.getComputedStyle(this).backgroundColor === "rgb(90, 124, 187)") {
 				this.style.backgroundColor = "";
 			} else {
-				this.style.backgroundColor = "#4cd9ae";
+				this.style.backgroundColor = "rgb(90, 124, 187)";
 			}
 			editor.focus();
 			editor.selectionStart = contrail.cursorPos;
