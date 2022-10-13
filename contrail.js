@@ -4,13 +4,31 @@ var intelli = [ "{", "[", "(", "'", '"']
 class Contrail {
 	constructor() {
 		this.cm = false;
+		this.cp = 1;
+		this.color_mode = false;
 	}
 
 	get codeMode() {
 		return this.cm;
 	}
 
-	switch_codeMode() {
+	get colorMode() {
+		return this.color_mode;
+	}
+
+	set cursorPos(pos) {
+		this.cp = pos;
+	}
+
+	get cursorPos() {
+		return this.cp;
+	}
+
+	switchColorMode() {
+		this.color_mode = !this.color_mode;
+	}
+
+	switchCodeMode() {
 		this.cm = !this.cm;
 	}
 
@@ -36,6 +54,7 @@ function CountLine( str ) {
 			linenum.insertAdjacentHTML('beforeend', "<span class=line-item>" + (i + 1) + "</span>");
 		}
 	}
+	highLight(str);
 }
 
 function onTextAreaKeyDown(event, object) {
@@ -93,8 +112,39 @@ function onTextAreaKeyDown(event, object) {
 			justBefore = "ot"
 		}
 	}
+
+	highLight(object.value)
 }
 
+function escapeHTML(string){
+    return string.replace(/&/g, '&lt;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, "&#x27;");
+}
+
+function highLight( str ) {
+	var text = escapeHTML(str);
+
+	if (contrail.colorMode) {
+		for (i = 0; i < str.length; i++) {
+			if (str.substr(i, 1) === '"') {
+				if (str.substr(i, 2) === '"<') {
+					continue;
+				}
+				for (j = i + 1; j < str.length; j++) {
+					if (str.substr(j, 1) === '"') {
+						text = str.substr(0, i) + '<span class=red>"' + str.substr(i + 1, j - i - 1) + '"</span>' + str.substr(j + 1);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	document.getElementById("code").innerHTML = text;
+}
 
 (function() {
 	var editor = document.getElementById("editor"); //エディタ
@@ -113,6 +163,8 @@ function onTextAreaKeyDown(event, object) {
 			} else {
 				this.style.backgroundColor = "#4cd9ae";
 			}
+			editor.focus();
+			editor.selectionStart = contrail.cursorPos;
 		})
 	}
 	
@@ -128,6 +180,16 @@ function onTextAreaKeyDown(event, object) {
 
 	//コードモード
 	document.getElementById('cmd-code-mode').addEventListener('click', function() {
-		contrail.switch_codeMode();
+		contrail.switchCodeMode();
 	});
+
+	//カラーモード
+	document.getElementById('cmd-color-mode').addEventListener('click', function() {
+		contrail.switchColorMode();
+		highLight(editor.value)
+	});
+
+	editor.addEventListener('blur', function() {
+		contrail.cursorPos = this.selectionStart;
+	})
 })();
