@@ -130,22 +130,34 @@ function escapeHTML(string){
 }
 
 function highLight( str ) {
-	var text = escapeHTML(str);
+	var text = "";
 
 	if (contrail.colorMode) {
+		var part = [];
+		var read = 0;
 		for (i = 0; i < str.length; i++) {
 			if (str.substr(i, 1) === '"') {
-				if (str.substr(i, 2) === '"<') {
-					continue;
-				}
-				for (j = i + 1; j < str.length; j++) {
-					if (str.substr(j, 1) === '"') {
-						text = str.substr(0, i) + '<span class=red>"' + str.substr(i + 1, j - i - 1) + '"</span>' + str.substr(j + 1);
-						break;
-					}
+				part.push(escapeHTML(str.substring(read, i)));
+				read = i + 1;
+			}
+		}
+		part.push(escapeHTML(str.substr(read)));
+		console.log(part);
+		for (i = 0; i < part.length; i++) {
+			if (i % 2 === 0) {
+				text += part[i];	
+			} else {
+				text += '<span class=red>"' + part[i];
+				if (i + 1 < part.length) {
+					text += '"</span>'
+				} else {
+					text += '</span>'
 				}
 			}
 		}
+		console.log(text);
+	} else {
+		text = escapeHTML(str);
 	}
 
 	document.getElementById("code").innerHTML = text;
