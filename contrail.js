@@ -105,10 +105,23 @@ function onTextAreaKeyDown(event, object) {
 			object.value = leftString + rightString.slice(1);
 			object.selectionEnd = cursorPosition;
 			justBefore = "bs"
-		} else if (keyCode === 13 && intelli.includes(justBefore)) {
-			object.value = leftString + "\n" + rightString;
-			object.selectionEnd = cursorPosition;
+		} else if (keyCode === 13) { //ender
+			event.preventDefault();
+			//行の初めにあるタブの数
+			//valueのカーソル文字手前までを切り取り、それを改行で区切った配列の末尾を取得することで行の初めからカーソル手前までを取得し、その中のタブ文字の数を取得する。
+			tabCount = object.value.substr(0, object.selectionStart - 1).split("\n").pop().split("\t").length
+			
+			if (intelli.includes(justBefore)) {
+				object.value = leftString + `\n${"\t".repeat(tabCount)}\n${"\t".repeat(tabCount - 1)}` + rightString;
+			} else {
+				object.value = leftString + `\n${"\t".repeat(tabCount - 1)}` + rightString;
+				tabCount -= 1;//下の計算の和を1減らす目的
+			}
+
 			justBefore = "bs"
+			CountLine(object.value)
+			object.selectionStart = cursorPosition + tabCount + 1;
+			object.selectionEnd = cursorPosition + tabCount + 1;
 		} else {
 			justBefore = "ot"
 		}
