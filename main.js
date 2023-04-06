@@ -1,7 +1,7 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
 const createWindow = () => {
@@ -10,8 +10,26 @@ const createWindow = () => {
     width: 860,
     height: 500,
     webPreferences: {
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     }
+  })
+
+  ipcMain.handle("clip_onclick", async (event, arg) => {
+			  if (arg) {
+          if (process.platform === "darwin") {
+            app.dock.hide()
+          }
+          mainWindow.setAlwaysOnTop(true, "screen-saver")
+          mainWindow.setVisibleOnAllWorkspaces(true)
+        } else {
+          if (process.platform === "darwin") {
+            app.dock.show()
+          }
+          mainWindow.setAlwaysOnTop(false, "screen-saver")
+          mainWindow.setVisibleOnAllWorkspaces(false)
+        }
+        return
   })
 
   // and load the index.html of the app.

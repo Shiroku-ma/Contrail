@@ -1,5 +1,6 @@
 var justBefore;
 var intelli = [ "{", "[", "(", "'", '"', "<"]
+var isClip = false;
 
 class Contrail {
 	constructor() {
@@ -176,6 +177,12 @@ function escapeHTML(string){
 	//コードモード
 	document.getElementById('cmd-code-mode').addEventListener('click', function() {
 		contrail.switchCodeMode();
+		alert("AA");
+	});
+
+	document.getElementById('cmd-front-clip').addEventListener('click', function() {
+		window.myAPI.clip_onclick(!isClip);
+		isClip = !isClip;
 	});
 
 	editor.addEventListener('blur', function() {
