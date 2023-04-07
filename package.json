@@ -20,7 +20,12 @@
       "target": {
         "target": "dir",
         "arch": "universal"
-      }
+      },
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
     }
   }
 }

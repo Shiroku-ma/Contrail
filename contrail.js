@@ -1,6 +1,5 @@
 var justBefore;
 var intelli = [ "{", "[", "(", "'", '"', "<"]
-var isClip = false;
 
 class Contrail {
 	constructor() {
@@ -102,15 +101,31 @@ function onTextAreaKeyDown(event, object) {
 			object.value = leftString + "<>" + rightString;
 			object.selectionEnd = cursorPosition + 1;
 			justBefore = "<";
-		} else if (keyCode === 8 && intelli.includes(justBefore)) {
-			object.value = leftString + rightString.slice(1);
-			object.selectionEnd = cursorPosition;
-			justBefore = "bs"
+		} else if (keyCode === 8) { //backspace
+			if (intelli.includes(justBefore)) {
+				object.value = leftString + rightString.slice(1);
+				object.selectionEnd = cursorPosition;
+				justBefore = "bs"
+			} else {
+				if (leftString.substr(-1) == "\n") {
+					const array = leftString.split("\n");
+					const index = array.length - 2; "連続タブ文字がある位置";
+					if (array[index].match(/^\t+$/) != null) {
+						event.preventDefault();
+						const tabCount = array[index].match(/\t/g || []).length
+						console.log(tabCount)
+						array.splice(index, 1)
+						leftString_new = array.join("\n");
+						object.value = leftString_new + rightString;
+						object.selectionEnd = cursorPosition - tabCount - 1;
+					}
+				}
+			}
 		} else if (keyCode === 13) { //ender
 			event.preventDefault();
 			//行の初めにあるタブの数
-			//valueのカーソル文字手前までを切り取り、それを改行で区切った配列の末尾を取得することで行の初めからカーソル手前までを取得し、その中のタブ文字の数を取得する。
-			tabCount = object.value.substr(0, object.selectionStart - 1).split("\n").pop().split("\t").length
+			//valueをカーソル位置までを切り取り、それを改行で区切った配列の末尾を取得することで行の初めからカーソル手前までを取得し、その中のタブ文字の数を取得する。
+			tabCount = object.value.substr(0, object.selectionStart).split("\n").pop().split("\t").length
 			
 			if (intelli.includes(justBefore)) {
 				object.value = leftString + `\n${"\t".repeat(tabCount)}\n${"\t".repeat(tabCount - 1)}` + rightString;
@@ -177,12 +192,24 @@ function escapeHTML(string){
 	//コードモード
 	document.getElementById('cmd-code-mode').addEventListener('click', function() {
 		contrail.switchCodeMode();
-		alert("AA");
 	});
 
+	//クリップ
+	var isClip = false;
 	document.getElementById('cmd-front-clip').addEventListener('click', function() {
 		window.myAPI.clip_onclick(!isClip);
 		isClip = !isClip;
+	});
+
+	var translucentMode = false;
+	//半透明モード
+	document.getElementById('cmd-glass-mode').addEventListener('click', function() {
+		if (translucentMode) {
+			window.myAPI.translucent_window(1);
+		} else {
+			window.myAPI.translucent_window(0.6);
+		}
+		translucentMode = !translucentMode
 	});
 
 	editor.addEventListener('blur', function() {
