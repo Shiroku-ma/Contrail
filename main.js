@@ -15,6 +15,8 @@ const createWindow = () => {
     }
   })
 
+  mainWindow.setMenuBarVisibility(false)
+
   ipcMain.handle("clip_onclick", async (event, arg) => {
 			  if (arg) {
           if (process.platform === "darwin") {
