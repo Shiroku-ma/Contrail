@@ -29,7 +29,14 @@ const createWindow = () => {
           mainWindow.setAlwaysOnTop(false, "screen-saver")
           mainWindow.setVisibleOnAllWorkspaces(false)
         }
+        mainWindow.show()
+        mainWindow.focus()
         return
+  })
+
+  ipcMain.handle("translucent_window", async (event, arg) => {
+    mainWindow.setOpacity(arg)
+    return
   })
 
   // and load the index.html of the app.
