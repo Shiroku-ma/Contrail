@@ -118,6 +118,7 @@ function onTextAreaKeyDown(event, object) {
 						leftString_new = array.join("\n");
 						object.value = leftString_new + rightString;
 						object.selectionEnd = cursorPosition - tabCount - 1;
+						CountLine(object.value);
 					}
 				}
 			}
