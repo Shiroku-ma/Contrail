@@ -109,7 +109,7 @@ function onTextAreaKeyDown(event, object) {
 			} else {
 				if (leftString.substr(-1) == "\n") {
 					const array = leftString.split("\n");
-					const index = array.length - 2; "連続タブ文字がある位置";
+					const index = array.length - 2; //連続タブ文字がある位置
 					if (array[index].match(/^\t+$/) != null) {
 						event.preventDefault();
 						const tabCount = array[index].match(/\t/g || []).length
